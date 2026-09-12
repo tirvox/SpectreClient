@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpectreClient</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0a0a0f; color: #fff; font-family: Inter, Arial, sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+  .card { text-align: center; padding: 48px 40px; background: #12121a; border: 1px solid #22222e; border-radius: 16px; max-width: 420px; width: 90%; }
+  h1 { font-size: 32px; letter-spacing: 2px; margin-bottom: 8px; }
+  h1 span { color: #7c5cff; }
+  p { color: #88889a; font-size: 14px; margin-bottom: 24px; line-height: 1.5; }
+  button { width: 100%; padding: 14px; font-size: 16px; font-weight: 600; border: none; border-radius: 10px; cursor: pointer; background: #7c5cff; color: #fff; margin-bottom: 12px; }
+  button:hover { background: #6a4de6; }
+  .links { display: flex; gap: 10px; }
+  .links a { flex: 1; padding: 10px; font-size: 13px; text-align: center; border-radius: 8px; text-decoration: none; background: #1c1c26; color: #bbb; border: 1px solid #2a2a38; }
+  .links a:hover { background: #242432; color: #fff; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>SPECTRE<span>CLIENT</span></h1>
+  <p>Нажми чтобы войти.<br>Откроется загрузка и Discord, затем сам сайт.</p>
+  <button id="enter">Войти на сайт</button>
+  <div class="links">
+    <a href="/site">Только сайт</a>
+    <a href="https://discord.gg/KZrRSK42Gw" target="_blank" rel="noopener">Только Discord</a>
+  </div>
+</div>
+<script>
+  var DOWNLOAD_URL = "https://dl.dropboxusercontent.com/scl/fi/9rjbsdftfz6jsxbq045eb/SpectreClient.jar?rlkey=9rp4hv3bzccc7bv4phwpd3qoa&st=zfchc0mi&dl=1";
+  var DISCORD_URL = "https://discord.gg/KZrRSK42Gw";
+
+  document.getElementById('enter').addEventListener('click', function() {
+    // Открываем по клику — иначе браузер заблокирует как попап
+    window.open(DOWNLOAD_URL, '_blank', 'noopener');
+    window.open(DISCORD_URL, '_blank', 'noopener');
+    // Идем на сам сайт
+    setTimeout(function() {
+      window.location.href = '/site';
+    }, 400);
+  });
+</script>
+</body>
+</html>

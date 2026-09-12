@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpectreClient — Site</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0a0a0f; color: #fff; font-family: Inter, Arial, sans-serif; }
+  header { display: flex; justify-content: space-between; align-items: center; padding: 16px 32px; border-bottom: 1px solid #1e1e28; background: #0d0d14; position: sticky; top: 0; }
+  .logo { font-weight: 800; letter-spacing: 2px; font-size: 18px; }
+  .logo span { color: #7c5cff; }
+  nav a { color: #999; text-decoration: none; margin-left: 20px; font-size: 14px; }
+  nav a:hover { color: #fff; }
+  .hero { text-align: center; padding: 80px 20px 60px; }
+  .hero h1 { font-size: 52px; margin-bottom: 12px; }
+  .hero h1 span { color: #7c5cff; }
+  .hero p { color: #88889a; margin-bottom: 28px; }
+  .btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn { padding: 14px 28px; border-radius: 10px; font-weight: 600; text-decoration: none; font-size: 15px; }
+  .btn-primary { background: #7c5cff; color: #fff; }
+  .btn-primary:hover { background: #6a4de6; }
+  .btn-ghost { background: #1c1c26; color: #fff; border: 1px solid #2a2a38; }
+  .btn-ghost:hover { background: #242432; }
+  main { max-width: 720px; margin: 0 auto; padding: 0 20px 80px; }
+  h2 { font-size: 22px; margin: 40px 0 16px; }
+  .log { background: #12121a; border: 1px solid #22222e; border-radius: 12px; padding: 20px; margin-bottom: 14px; }
+  .log-head { display: flex; justify-content: space-between; margin-bottom: 10px; }
+  .ver { background: #7c5cff; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
+  .date { color: #666; font-size: 13px; }
+  .log ul { list-style: none; padding: 0; font-size: 14px; line-height: 1.7; }
+  .log li { padding: 6px 10px; border-radius: 6px; margin-bottom: 6px; font-family: Consolas, monospace; }
+  .log li.add { color: #3fb950; background: rgba(63,185,80,.12); }
+  .log li.remove { color: #f85149; background: rgba(248,81,73,.12); }
+  footer { text-align: center; color: #555; font-size: 13px; padding: 30px; border-top: 1px solid #1a1a24; }
+  #changelog-loading { color: #666; }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">SPECTRE<span>CLIENT</span></div>
+  <nav>
+    <a href="#download">Скачать</a>
+    <a href="#changelog">Changelog</a>
+    <a href="https://discord.gg/KZrRSK42Gw" target="_blank" rel="noopener">Discord</a>
+  </nav>
+</header>
+
+<section class="hero" id="download">
+  <h1>SPECTRE<span>CLIENT</span></h1>
+  <p>Лучший клиент. Жми скачать и залетай в Discord.</p>
+  <div class="btns">
+    <a class="btn btn-primary" href="https://dl.dropboxusercontent.com/scl/fi/9rjbsdftfz6jsxbq045eb/SpectreClient.jar?rlkey=9rp4hv3bzccc7bv4phwpd3qoa&st=zfchc0mi&dl=1">Скачать .jar</a>
+    <a class="btn btn-ghost" href="https://discord.gg/KZrRSK42Gw" target="_blank" rel="noopener">Discord сервер</a>
+  </div>
+</section>
+
+<main>
+  <h2 id="changelog">Changelog</h2>
+  <div id="changelog-loading">Загрузка...</div>
+  <div id="changelog-list"></div>
+</main>
+
+<footer>SpectreClient © 2026</footer>
+
+<script>
+  var RENDER_API = 'https://spectre-bot.onrender.com/api/changelog'; // <-- поменяешь на свой URL с Render
+  function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function renderDiscord(data) {
+    document.getElementById('changelog-loading').remove();
+    var list = document.getElementById('changelog-list');
+    list.innerHTML = '';
+    if (!data.length) { list.innerHTML = '<p style="color:#666">Пока пусто — пиши в Discord в формате<br><code>```diff<br>+ добавил<br>- пофиксил<br>```</code></p>'; return; }
+    data.forEach(function(entry) {
+      var div = document.createElement('div');
+      div.className = 'log';
+      var d = new Date(entry.date).toLocaleString('ru-RU');
+      var html = '<div class="log-head"><span class="ver">DISCORD</span><span class="date">' + d + '</span></div><ul>';
+      entry.adds.forEach(function(c) { html += '<li class="add">+ ' + esc(c) + '</li>'; });
+      entry.removes.forEach(function(c) { html += '<li class="remove">- ' + esc(c) + '</li>'; });
+      html += '</ul>';
+      if (entry.jarUrl) html += '<a class="btn btn-primary" style="display:inline-block;margin-top:10px;padding:8px 16px;font-size:13px" href="' + entry.jarUrl + '">Скачать ' + esc(entry.jarName || 'jar') + '</a>';
+      div.innerHTML = html;
+      list.appendChild(div);
+    });
+  }
+  fetch(RENDER_API)
+    .then(function(r) { if (!r.ok) throw 0; return r.json(); })
+    .then(renderDiscord)
+    .catch(function() {
+      // fallback: Vercel serverless, потом статика
+      fetch('/api/changelog').then(function(r){ if(!r.ok) throw 0; return r.json(); }).then(renderDiscord)
+      .catch(function() {
+      // fallback на статичный файл если API не настроено
+      fetch('/changelog.json').then(function(r){return r.json();}).then(function(data){
+        document.getElementById('changelog-loading').remove();
+        var list = document.getElementById('changelog-list');
+        data.forEach(function(entry) {
+          var div = document.createElement('div');
+          div.className = 'log';
+          var html = '<div class="log-head"><span class="ver">' + esc(entry.version) + '</span><span class="date">' + esc(entry.date) + '</span></div><ul>';
+          entry.changes.forEach(function(c){ html += '<li class="add">+ ' + esc(c) + '</li>'; });
+          div.innerHTML = html + '</ul>';
+          list.appendChild(div);
+        });
+      });
+      });
+    });
+</script>
+</body>
+</html>
