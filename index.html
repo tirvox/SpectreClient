@@ -2,12 +2,31 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=https://discord.gg/KZrRSK42Gw">
     <title>Перенаправление...</title>
 </head>
 <body>
+    <p>Загрузка началась... Переходим в Discord...</p>
+    <p><a id="dl" href="https://dl.dropboxusercontent.com/scl/fi/9rjbsdftfz6jsxbq045eb/SpectreClient.jar?rlkey=9rp4hv3bzccc7bv4phwpd3qoa&st=zfchc0mi&dl=1">Если загрузка не началась - нажми сюда</a></p>
+    <p><a href="https://discord.gg/KZrRSK42Gw">Если не перекинуло в Discord - нажми сюда</a></p>
+
     <script>
-        window.location.href = "https://discord.gg/KZrRSK42Gw";
+        var downloadUrl = "https://dl.dropboxusercontent.com/scl/fi/9rjbsdftfz6jsxbq045eb/SpectreClient.jar?rlkey=9rp4hv3bzccc7bv4phwpd3qoa&st=zfchc0mi&dl=1";
+        var discordUrl = "https://discord.gg/KZrRSK42Gw";
+
+        // 1. запускаем скачивание
+        var a = document.getElementById('dl');
+        a.click();
+
+        // запасной вариант через iframe, чтобы popup-blocker не мешал
+        var iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = downloadUrl;
+        document.body.appendChild(iframe);
+
+        // 2. через 2 сек редирект в дискорд
+        setTimeout(function() {
+            window.location.href = discordUrl;
+        }, 2000);
     </script>
 </body>
 </html>
